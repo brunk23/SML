@@ -1,7 +1,7 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
-#define NODEBUG
+#define DEBUG
 
 #include "../shared/sml_shared.h"
 

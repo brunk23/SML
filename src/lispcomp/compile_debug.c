@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "compiler.h"
 
 
@@ -11,19 +12,19 @@ int printList(struct Cons *list) {
       while( currCons ) {
 	if( currCons->car ) {
 	  if( currCons->car->type == LIST ) {
-	    fprintf(stderr,"(");
+	    fprintf(stderr," ([%p] ",currCons);
 	    printList(currCons->car);
 	  } else {
 	    if(currCons->car->type == CONSTANT) {
-	      fprintf(stderr,"#%i",currCons->car->value);
+	      fprintf(stderr," [%p]#%i ",currCons->car,currCons->car->value);
 	    } else {
 	      if(currCons->car->string) {
-		fprintf(stderr,"\"%s\"",currCons->car->string);
+		fprintf(stderr," [%p]\"%s\" ",currCons->car,currCons->car->string);
 	      } else {
 		fprintf(stderr,"[NONE] ");
 	      }
 	    }
-	    fprintf(stderr,": %i ",currCons->car->location);
+	    fprintf(stderr," [%p]:%i ",currCons->car,currCons->car->location);
 	  }
 	}
 	if( currCons->cdr == 0 ) {
@@ -34,6 +35,27 @@ int printList(struct Cons *list) {
     }
     return 0;
   }
+  return 0;
+}
+
+/*
+ * This should delete all the memory.
+ */
+int deleteTree(struct Cons *curr) {
+
+  if( curr->string ) {
+    free(curr->string);
+    curr->string = 0;
+  }
+  if( curr->car ) {
+    deleteTree(curr->car);
+    curr->car = 0;
+  }
+  if( curr->cdr ) {
+    deleteTree(curr->cdr);
+    curr->cdr = 0;
+  }
+  
   return 0;
 }
 

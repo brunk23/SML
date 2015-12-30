@@ -16,13 +16,15 @@ int compileTree(struct Cons *base, int code[MEMSIZE]) {
   comp_list(base,&symTree,code);
   code[iptr(1)] = (HALT*OPFACT) + NIL;
 
-#ifdef DEBUG
-  printList(symTree);
-  fprintf(stderr,"\n");
-#endif
   assign_symbols(symTree,code);
   resolve_symbols(base,symTree,code);
-  
+
+  /*
+   *  printf("Deleting symTree\n");
+   *  deleteTree(symTree);
+   *  free(symTree);
+   */  
+
   return 0;
 }
 

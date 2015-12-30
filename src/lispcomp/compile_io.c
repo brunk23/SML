@@ -61,6 +61,8 @@ int process_source(char *filename, int core[]) {
 
       if(temptoken->type == EOL) {
 	ctoken = pop(&stack);
+	free(temptoken);
+	temptoken = 0;
 	continue;
       }
 
@@ -93,6 +95,12 @@ int process_source(char *filename, int core[]) {
   }
 
   compileTree(base,core);
+
+  /*
+   *  printf("Deleting base\n");
+   *  deleteTree(base);
+   *  free(base);
+   */
   
   return 0;
 }
