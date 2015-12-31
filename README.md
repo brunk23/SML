@@ -21,7 +21,7 @@ currently supports the following commands:
 * print -- (print (statement)) -- returns value printed or number of chars printed
 * setf -- (setf variable (statement) )
 * if -- (if (condition) (statement) (statement) )
-* inc/dec -- (1+ variable) (1- variable)
+* inc/dec -- (1+ variable) (1- variable) [DONE]
 * loop -- (loop (statements) ... (if (cond) (return)))
 * cond -- (< <= >= > = !=)
 * operators -- (*, /, %, +, -)

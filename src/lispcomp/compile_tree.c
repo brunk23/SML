@@ -72,27 +72,20 @@ int comp_list(struct Cons *c, struct Cons **symtree,
 	break;
 
       case EQL:
-	comp_cond(curr, symtree, code, EQL);
-	break;
-
       case DNE:
-	comp_cond(curr, symtree, code, DNE);
-	break;
-
       case GT:
-	comp_cond(curr, symtree, code, GT);
-	break;
-
       case GTE:
-	comp_cond(curr, symtree, code, GTE);
-	break;
-
       case LT:
-	comp_cond(curr, symtree, code, LT);
+      case LTE:
+	comp_cond(curr, symtree, code);
 	break;
 
-      case LTE:
-	comp_cond(curr, symtree, code, LTE);
+      case INCM:
+	comp_incdec(curr, symtree, code, INC);
+	break;
+
+      case DECM:
+	comp_incdec(curr, symtree, code, DEC);
 	break;
 	
       default:

@@ -93,6 +93,16 @@ struct Cons *process_symbol(struct Cons *curr, struct Cons *sym) {
     temp->ID = DNE;
     temp->args = 2;
   }
+  if(strcmp(n,"1+") == 0) {
+    temp->type = INTERNAL;
+    temp->ID = INCM;
+    temp->args = 1;
+  }
+  if(strcmp(n,"1-") == 0) {
+    temp->type = INTERNAL;
+    temp->ID = DECM;
+    temp->args = 1;
+  }
   if(strcmp(n,"progn") == 0) {
     temp->type = INTERNAL;
     temp->ID = PROGN;

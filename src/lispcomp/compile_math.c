@@ -49,3 +49,23 @@ int comp_math(struct Cons *head, struct Cons **symtree,
   
   return 0;
 }
+
+int comp_incdec(struct Cons *head, struct Cons **symtree,
+		int code[MEMSIZE],int oper) {
+  struct Cons *arg, *sym;
+
+  arg = head->cdr;
+
+  sym = inSymTree(arg->car,*symtree);
+
+  if( (length(arg) != head->car->args) || !sym ||
+      sym->type != VARIABLE) {
+    emessg("You can only use '1+' and '1-' with a single variable",1);
+  }
+
+  arg->car->resolved = NIL;
+  arg->car->location = iptr(0);
+  code[iptr(1)] = (oper*OPFACT) + NIL;
+
+  return 0;
+}

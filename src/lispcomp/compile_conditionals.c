@@ -52,9 +52,11 @@ int comp_if(struct Cons *head, struct Cons **symtree,
 }
 
 int comp_cond(struct Cons *head, struct Cons **symtree,
-	      int code[MEMSIZE], int oper) {
+	      int code[MEMSIZE]) {
   struct Cons *arg1, *arg2, *curr;
+  int oper;
 
+  oper = head->car->ID;
   curr = head->cdr;
   
   if( length(curr) != head->car->args ) {

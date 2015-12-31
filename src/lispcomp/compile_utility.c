@@ -147,9 +147,8 @@ struct Cons *nth(struct Cons *list, int n) {
  */
 struct Cons *getNextNode(char *string) {
   static char *s = 0;
-  static int x = 0;
+  static int x = 0, fname = NIL;
   static char prev = 0;
-
   struct Cons *created;
   
   int y;
@@ -191,12 +190,14 @@ struct Cons *getNextNode(char *string) {
     /* we need to return a token to represent it */
     created->type = EOL;
     prev = s[++x];
+    fname = NIL;
     return created;
   }
 
   if( prev == '(' ) {
     created->type = LIST;
     prev = s[++x];
+    fname = T;
     return created;
   }
   
@@ -226,6 +227,7 @@ struct Cons *getNextNode(char *string) {
     /* this starts a list */
     created->type = LIST;
     prev = s[++x];
+    fname = T;
     return created;
   }
 
@@ -233,6 +235,7 @@ struct Cons *getNextNode(char *string) {
     /* this ends a list */
     created->type = EOL;
     prev = s[++x];
+    fname = NIL;
     return created;
   }
 
@@ -242,7 +245,7 @@ struct Cons *getNextNode(char *string) {
     return 0;
   }
   
-  if( !(s[y] >='0' && s[y] <= '9') ||
+  if( fname || !(s[y] >='0' && s[y] <= '9') ||
       ((s[y] == '+' || s[y] =='-') &&
        !((s[y+1] >= '0') && (s[y+1] <= '9')))) {
     created->type = SYMBOL;
@@ -252,6 +255,7 @@ struct Cons *getNextNode(char *string) {
     } else {
       emessg("String not created",1);
     }
+    fname = NIL;
     return created;
   }
   
@@ -259,6 +263,7 @@ struct Cons *getNextNode(char *string) {
       (s[y] == '-') || (s[y] == '+') ) {
     created->type = CONSTANT;
     created->value = strtol(&s[y],0,10);
+    fname = NIL;
     return created;
   }
 
