@@ -96,11 +96,8 @@ int process_source(char *filename, int core[]) {
 
   compileTree(base,core);
 
-  /*
-   *  printf("Deleting base\n");
-   *  deleteTree(base);
-   *  free(base);
-   */
+  deleteTree(base);
+  free(base);
   
   return 0;
 }

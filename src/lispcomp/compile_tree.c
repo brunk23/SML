@@ -19,11 +19,10 @@ int compileTree(struct Cons *base, int code[MEMSIZE]) {
   assign_symbols(symTree,code);
   resolve_symbols(base,symTree,code);
 
-  /*
-   *  printf("Deleting symTree\n");
-   *  deleteTree(symTree);
-   *  free(symTree);
-   */  
+
+  printf("Deleting symTree\n");
+  deleteTree(symTree);
+  free(symTree);
 
   return 0;
 }
@@ -178,11 +177,17 @@ int comp_print(struct Cons *head, struct Cons **symtree,
     temp->string[y] = 0;
     (*symtree) = push(temp, *symtree);
     arg->resolved = NIL;
-    arg->string = temp->string;
+    if( !(arg->string = malloc(strlen(temp->string)+1))) {
+      emessg("Couldn't get new string.",1);
+    }
+    strncpy(arg->string,temp->string,strlen(temp->string)+1);
     arg->location = iptr(0);
     code[iptr(1)] = (STORE*OPFACT) + NIL;
     arg->car->resolved = NIL;
-    arg->car->string = temp->string;
+    if( !(arg->car->string = malloc(strlen(temp->string)+1))) {
+      emessg("Couldn't get new string.",1);
+    }
+    strncpy(arg->car->string,temp->string,strlen(temp->string)+1);
     arg->car->location = iptr(0);
     code[iptr(1)] = (WRITE*OPFACT) + NIL;
     sym = temp;

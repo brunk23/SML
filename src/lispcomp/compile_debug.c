@@ -49,10 +49,12 @@ int deleteTree(struct Cons *curr) {
   }
   if( curr->car ) {
     deleteTree(curr->car);
+    free(curr->car);
     curr->car = 0;
   }
   if( curr->cdr ) {
     deleteTree(curr->cdr);
+    free(curr->cdr);
     curr->cdr = 0;
   }
   
