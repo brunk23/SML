@@ -94,6 +94,9 @@ int main(int argc, char *argv[])
       }	
       counter++;
     }
+    cout << right << setw(4) << "LOC:" << setw(8)
+	 << "VALUE" << setw(6) << "LBL" << setw(13)
+	 << "INSTRUCTION" << setw(10) << "ARGUMENT" << endl;
     for( int x = 0; x < MEMSIZE; ++x ) {
       if( dtype[x] ) {
 	top = contents[x] / OPFACT;
@@ -112,7 +115,7 @@ int main(int argc, char *argv[])
 	    top -= MAXOP;
 	  }
 	  if( top < MAXOP)  {
-	    cout << setw(6) << opcodemap[top];
+	    cout << setw(8) << opcodemap[top];
 	    if( top == POP || top == PUSH ) {
 	      cout << setw(1) << "+" << setw(5) << opcodemap[bottom];
 	    } else {
