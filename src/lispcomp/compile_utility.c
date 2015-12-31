@@ -52,14 +52,16 @@ struct Cons *copy(struct Cons *old) {
   if(old->type == CONSTANT) {
     cpy->value = old->value;
   } else {
-    if( !(cpy->string = malloc( strlen( old->string ) + 1))) {
-      emessg("Could not make new string",1);
+    if( old->string ) {
+      if( !(cpy->string = malloc( strlen( old->string ) + 1))) {
+	emessg("Could not make new string",1);
+      }
+      strncpy(cpy->string, old->string, strlen( old->string ) + 1 );
     }
-    strncpy(cpy->string,old->string,strlen(old->string)+1);
   }
-  cpy->ID=old->ID;
-  cpy->args=old->args;
-  cpy->location= -1;
+  cpy->ID = old->ID;
+  cpy->args = old->args;
+  cpy->location = -1;
   cpy->resolved = NIL;
 
   return cpy;
@@ -144,17 +146,20 @@ struct Cons *nth(struct Cons *list, int n) {
  * This is currently not working with '(' and ')' correctly
  */
 struct Cons *getNextNode(char *string) {
-  static char *s;
-  static int x;
-  static char prev;
+  static char *s = 0;
+  static int x = 0;
+  static char prev = 0;
 
   struct Cons *created;
   
   int y;
   
-  if(string) {
-    if(s) {
-      free(s);
+  if( string ) {
+    if( s ) {
+      free( s );
+    }
+    if( strlen(string) == 0 ) {
+      return 0;
     }
     s = malloc(strlen(string) + 1);
     strncpy(s,string,strlen(string)+1);
@@ -178,6 +183,7 @@ struct Cons *getNextNode(char *string) {
   created->cdr = 0;
   created->location = 0;
   created->string = 0;
+  created->value = 0;
   created->resolved = T;
   created->ID=getID();
 
@@ -242,7 +248,7 @@ struct Cons *getNextNode(char *string) {
     created->type = SYMBOL;
     created->string = malloc( strlen(&s[y]) + 1 );
     if( created->string ) {
-      strncpy(created->string, &s[y], strlen(&s[y]) +1 );
+      strncpy(created->string, &s[y], strlen( &s[y]) + 1 );
     } else {
       emessg("String not created",1);
     }
@@ -255,7 +261,12 @@ struct Cons *getNextNode(char *string) {
     created->value = strtol(&s[y],0,10);
     return created;
   }
-  return created;
+
+  if( created->string ) {
+    free(string);
+  }
+  free(created);
+  return 0;
 }
   
 

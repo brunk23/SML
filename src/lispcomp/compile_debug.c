@@ -12,19 +12,19 @@ int printList(struct Cons *list) {
       while( currCons ) {
 	if( currCons->car ) {
 	  if( currCons->car->type == LIST ) {
-	    fprintf(stderr," ([%p] ",currCons);
+	    fprintf(stderr," ( ");
 	    printList(currCons->car);
 	  } else {
 	    if(currCons->car->type == CONSTANT) {
-	      fprintf(stderr," [%p]#%i ",currCons->car,currCons->car->value);
+	      fprintf(stderr," #%i ",currCons->car->value);
 	    } else {
 	      if(currCons->car->string) {
-		fprintf(stderr," [%p]\"%s\" ",currCons->car,currCons->car->string);
+		fprintf(stderr," \"%s\" ",currCons->car->string);
 	      } else {
 		fprintf(stderr,"[NONE] ");
 	      }
 	    }
-	    fprintf(stderr," [%p]:%i ",currCons->car,currCons->car->location);
+	    fprintf(stderr,":%i ",currCons->car->location);
 	  }
 	}
 	if( currCons->cdr == 0 ) {
@@ -57,7 +57,7 @@ int deleteTree(struct Cons *curr) {
     free(curr->cdr);
     curr->cdr = 0;
   }
-  
+
   return 0;
 }
 

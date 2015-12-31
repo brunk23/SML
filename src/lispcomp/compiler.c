@@ -29,8 +29,6 @@ int main(int argc, char *argv[]) {
     help_menu(argv[0]);
     return 1;
   }
-
-  printf("Source: %s\nDestination: %s\n",argv[source],argv[dest]);
   
   /* PROCESS THE FILE AND GENERATE THE OUTPUT */
   if( (retcode = process_source(argv[source], core)) ) {

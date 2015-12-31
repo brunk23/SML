@@ -39,7 +39,7 @@ int process_source(char *filename, int core[]) {
   base->car->type = INTERNAL;
   base->car->ID = PROGN;
   base->car->location = 0;
-  base->string = 0;
+  base->car->string = 0;
   base->car->car = 0;
   base->car->cdr = 0;
   base->car->resolved = T;
@@ -55,12 +55,15 @@ int process_source(char *filename, int core[]) {
 
     while( 1 ) {
       if( !(temptoken = getNextNode(curr)) ) {
-	break;			/* end of line */
+	break;		/* end of line */
       }
       curr = 0;
 
       if(temptoken->type == EOL) {
 	ctoken = pop(&stack);
+	if(temptoken->string) {
+	  free(temptoken->string);
+	}
 	free(temptoken);
 	temptoken = 0;
 	continue;
@@ -76,15 +79,11 @@ int process_source(char *filename, int core[]) {
         stack=push(ctoken,stack);
 	ctoken = temptoken;
       }
-      
     }
-      
   }
 
-#ifdef DEBUG
-  printList(base);
-   printf("\n");
-#endif
+  /* Free the last remaining memory */
+  getNextNode("");
 
   /*
    * Before we actually compile the parsed tree
@@ -98,6 +97,15 @@ int process_source(char *filename, int core[]) {
 
   deleteTree(base);
   free(base);
+
+  if(line) {
+    free(line);
+  }
+
+  if( source ) {
+    fclose(source);
+    source = 0;
+  }
   
   return 0;
 }
