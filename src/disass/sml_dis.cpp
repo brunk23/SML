@@ -29,7 +29,6 @@ int main(int argc, char *argv[])
   int scount = 0, top = 0, bottom = 0;
   string line;
   bool indirect = false;
-  char *parse, *pfull, *before;
   
   for(int x = 0; x < MEMSIZE; ++x) {
     dtype[x] = 0;
@@ -54,54 +53,47 @@ int main(int argc, char *argv[])
       cout << "Unable to open file" << endl;
       return 1;
     }
-    while( getline(filename, line) ) {
-      parse = 0;
-      pfull = new char[line.size()];
-      strncpy(pfull, line.c_str(), line.size());
-      parse = pfull;
-      while( true ) {
-	before = parse;
-	input = strtol(parse, &parse, 10);
-	if( parse == before || parse == 0 ) {
-	  break;
-	}
-	contents[counter] = input;
-	top = contents[counter] / OPFACT;
-	bottom = contents[counter] % OPFACT;
+    while( !filename.eof() ) {
+      filename >> input;
+      if( filename.fail() ) {
+	filename.clear();
+	filename.ignore();
+	continue;
+      }
+      contents[counter] = input;
+      top = contents[counter] / OPFACT;
+      bottom = contents[counter] % OPFACT;
 
-	if( dtype[counter] & CODE ) {
-	  if( vname[bottom][0] == 0 ) {
-	    bool inc = true;
-	    for( int y = 3; y >= 0; --y ) {
-	      vname[bottom][y] = cname[y];
-	      if( inc && cname[y] > 0 ) {
-		if( cname[y] < 'z' ) {
-		  cname[y]++;
-		  inc = false;
-		} else {
-		  cname[y] = 'a';
-		}
+      if( dtype[counter] & CODE ) {
+	if( vname[bottom][0] == 0 ) {
+	  bool inc = true;
+	  for( int y = 3; y >= 0; --y ) {
+	    vname[bottom][y] = cname[y];
+	    if( inc && cname[y] > 0 ) {
+	      if( cname[y] < 'z' ) {
+		cname[y]++;
+		inc = false;
+	      } else {
+		cname[y] = 'a';
 	      }
 	    }
 	  }
-	  if( top != HALT && top != RET && top != BRANCH) {
-	    dtype[counter+1] |= CODE;
-	  }
-	  if( top == SREAD || top == SWRITE ) {
-	    dtype[bottom] |= STRI;
+	}
+	if( top != HALT && top != RET && top != BRANCH) {
+	  dtype[counter+1] |= CODE;
+	}
+	if( top == SREAD || top == SWRITE ) {
+	  dtype[bottom] |= STRI;
+	} else {
+	  if( top == BRANCH || top == BRANCHNEG ||
+	      top == BRANCHZERO || top == CALL ) {
+	    dtype[bottom] |= CODE;
 	  } else {
-	    if( top == BRANCH || top == BRANCHNEG ||
-		top == BRANCHZERO || top == CALL ) {
-	      dtype[bottom] |= CODE;
-	    } else {
-	      dtype[bottom] |= DATA;
-	    }
+	    dtype[bottom] |= DATA;
 	  }
 	}
-	
-	counter++;
-      }
-      delete pfull;
+      }	
+      counter++;
     }
     for( int x = 0; x < MEMSIZE; ++x ) {
       if( dtype[x] ) {
