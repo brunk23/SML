@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 	    top -= MAXOP;
 	  }
 	  if( top < MAXOP)  {
-	    cout << setw(5) << opcodemap[top];
+	    cout << setw(6) << opcodemap[top];
 	    if( top == POP || top == PUSH ) {
 	      cout << setw(1) << "+" << setw(5) << opcodemap[bottom];
 	    } else {
