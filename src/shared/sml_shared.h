@@ -18,7 +18,7 @@
  *   location
  */
 enum OPCODES {
-  NOP = 0, DUMP = 5,
+  NOP = 0, DUMP,
   READ = 10, WRITE, SREAD, SWRITE,
   LOAD = 20, STORE, PUSH, POP,
   ADD = 30, SUBTRACT, DIVIDE, MULTIPLY, MOD, INC, DEC,

@@ -31,3 +31,9 @@ Everything is case-insensitive. It will be forced to lower-case.
 
 The basic compiler uses statements similar to the ones given by Deital and
 Deital in their activity recommendations.
+
+Note: The current setup expects 32 bit integers (i.e. 4 byte numbers). In any
+case, it must be able to contain -999,999 to 999,999.  This is true on 64 bit
+machines. On machines with 2 byte integers, you may have to adapt the code.
+The original machine (-9999 to 9999) does work on 16 bit integers. You will have
+to change some of the code (mainly MEMSIZE and OPFACT).
