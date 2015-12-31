@@ -14,16 +14,31 @@ using std::string;
 using std::ifstream;
 using std::setfill;
 
+#define CODE 0x1
+#define DATA 0x2
+#define STRI 0x4
+
 void define_codes(const char *[]);
 
 int main(int argc, char *argv[])
 {
   const char *opcodemap[MAXOP];
-  int type[MEMSIZE];
-
+  int dtype[MEMSIZE], contents[MEMSIZE];
+  char vname[MEMSIZE][4], cname[4] = { 'a', 'a', 'a', 0 };
+  int returnCode = 0, counter = 0, input = 0;
+  int scount = 0, top = 0, bottom = 0;
+  string line;
+  bool indirect = false;
+  char *parse, *pfull, *before;
+  
   for(int x = 0; x < MEMSIZE; ++x) {
-    type[x] = 0;
+    dtype[x] = 0;
+    contents[x] = 0;
+    for( int y = 0; y < 4; ++y) {
+      vname[x][y] = 0;
+    }
   }
+  dtype[0] |= CODE;
 
   /*
    * This is not done. It should recognize labels, strings, data
@@ -31,12 +46,6 @@ int main(int argc, char *argv[])
    */
   
   define_codes(opcodemap);
-
-  int returnCode = 0, counter = 0;
-  int input = 0;
-  string line;
-  bool indirect = false;
-  char *parse, *pfull, *before;
 
   if( argc > 1 ) {
     ifstream filename;
@@ -56,25 +65,88 @@ int main(int argc, char *argv[])
 	if( parse == before || parse == 0 ) {
 	  break;
 	}
-	cout << setw(3) << counter << ":";
-	cout << setw(4) << input / OPFACT;
-	cout << setw(3) << input % OPFACT;
-	if( (input / OPFACT) > MAXOP ) {
-	  indirect = true;
-	  input -= 100 * OPFACT;
+	contents[counter] = input;
+	top = contents[counter] / OPFACT;
+	bottom = contents[counter] % OPFACT;
+
+	if( dtype[counter] & CODE ) {
+	  if( vname[bottom][0] == 0 ) {
+	    bool inc = true;
+	    for( int y = 3; y >= 0; --y ) {
+	      vname[bottom][y] = cname[y];
+	      if( inc && cname[y] > 0 ) {
+		if( cname[y] < 'z' ) {
+		  cname[y]++;
+		  inc = false;
+		} else {
+		  cname[y] = 'a';
+		}
+	      }
+	    }
+	  }
+	  // The destination is a string
+	  if( top != HALT && top != RET ) {
+	    dtype[counter+1] |= CODE;
+	  }
+	  if( top == SREAD || SWRITE ) {
+	    dtype[bottom] |= STRI;
+	  } else {
+	    if( top == BRANCH || top == BRANCHNEG ||
+		top == BRANCHZERO || top == CALL ) {
+	      dtype[bottom] |= CODE;
+	    } else {
+	      dtype[bottom] |= DATA;
+	    }
+	  }
 	}
-	if( (input/OPFACT) < MAXOP)  {
-	  cout << setw(10) << opcodemap[input/OPFACT];
-	  cout << setw(4) << input % OPFACT;
-	  if( indirect ) {
-	    cout << " ** indirect **";
+	
+
+	if( dtype[counter] & STRI ) {
+	  if( scount > 0 ) {
+	    scount -= 2;
+	    dtype[counter+1] |= STRI;
+	  } else {
+	    scount = top/2 + 1;
+	  }
+	}
+	counter++;
+      }
+      delete pfull;
+    }
+    for( int x = 0; x < MEMSIZE; ++x ) {
+      if( dtype[x] ) {
+	top = contents[x] / OPFACT;
+	bottom = contents[x] % OPFACT;
+	cout << setfill('0') << setw(3) << x << ":  ";
+	cout << setw(7) << contents[x] << "  ";
+	cout << setfill(' ');
+	if( vname[x][0] ) {
+	  cout << vname[x];
+	} else {
+	  cout << "   ";
+	}
+	if( dtype[x] & CODE ) {
+	  if( top > MAXOP ) {
+	    indirect = true;
+	    top -= MAXOP;
+	  }
+	  if( top < MAXOP)  {
+	    cout << setw(8) << opcodemap[top] << " ";
+	    cout << setw(5);
+	    if( vname[bottom][0] ) {
+	      cout << vname[bottom];
+	    } else {
+	      cout << bottom;
+	    }
+	    if( indirect ) {
+	      cout << " ** indirect **";
+	    }
 	  }
 	}
 	cout << endl;
 	indirect = false;
 	counter++;
       }
-      delete pfull;
     }
   } else {
     cout << "You must enter a core file name" << endl;
@@ -90,36 +162,36 @@ void define_codes(const char *opcodemap[]) {
 	
   // Arithmatic
   opcodemap[ADD]="ADD";
-  opcodemap[SUBTRACT]="SUB";
-  opcodemap[MULTIPLY]="MUL";
-  opcodemap[DIVIDE]="DIV";
-  opcodemap[MOD]="MOD";
+  opcodemap[SUBTRACT]="SUBTR";
+  opcodemap[MULTIPLY]="MULT";
+  opcodemap[DIVIDE]="DIVID";
+  opcodemap[MOD]="MODULUS";
 
   // memory access
-  opcodemap[LOAD]="LDA";
-  opcodemap[STORE]="STR";
+  opcodemap[LOAD]="LOAD";
+  opcodemap[STORE]="STORE";
 
   // i/o
-  opcodemap[READ]="RD";
-  opcodemap[WRITE]="WRT";
-  opcodemap[SREAD]="RDS";
-  opcodemap[SWRITE]="WRS";
+  opcodemap[READ]="READ";
+  opcodemap[WRITE]="WRITE";
+  opcodemap[SREAD]="READSTR";
+  opcodemap[SWRITE]="WRITESTR";
 
   // flow control
-  opcodemap[BRANCH]="BR";
-  opcodemap[BRANCHNEG]="BRN";
-  opcodemap[BRANCHZERO]="BRZ";
-  opcodemap[HALT]="HLT";
+  opcodemap[BRANCH]="BRNCH";
+  opcodemap[BRANCHNEG]="BRNEG";
+  opcodemap[BRANCHZERO]="BRZERO";
+  opcodemap[HALT]="HALT";
 
   // Extended opcodes
-  opcodemap[INC]="INC";
-  opcodemap[DEC]="DEC";
-  opcodemap[DUMP]="DMP";
+  opcodemap[INC]="INCR";
+  opcodemap[DEC]="DECR";
+  opcodemap[DUMP]="DUMP";
   opcodemap[NOP]="NOP";
 
   // Stack opcodes
-  opcodemap[PUSH]="PSH";
+  opcodemap[PUSH]="PUSH";
   opcodemap[POP]="POP";
-  opcodemap[CALL]="CAL";
-  opcodemap[RET]="RET";
+  opcodemap[CALL]="CALL";
+  opcodemap[RET]="RETURN";
 }
