@@ -199,7 +199,13 @@ int comp_print(struct Cons *head, struct Cons **symtree,
     sym = inSymTree(arg,*symtree);
 
     if( !sym ) {
-      emessg("Can't print something that doesn't exist.",1);
+      if( arg->type == CONSTANT ) {
+	/* Constants always added to the symbol tree */
+	(*symtree) = push(copy(arg), *symtree);
+	sym = inSymTree(arg,*symtree);
+      } else {
+	emessg("Can't print something that doesn't exist.",1);
+      }
     }
     
     if(sym->type == STRING) {

@@ -9,6 +9,8 @@ using std::cin;
 using std::cout;
 using std::endl;
 using std::setw;
+using std::left;
+using std::right;
 using std::ifstream;
 using std::setfill;
 
@@ -96,9 +98,9 @@ int main(int argc, char *argv[])
       if( dtype[x] ) {
 	top = contents[x] / OPFACT;
 	bottom = contents[x] % OPFACT;
-	cout << setfill('0') << setw(3) << x << ":  ";
+	cout << right << setfill('0') << setw(3) << x << ":  ";
 	cout << setw(7) << contents[x] << "  ";
-	cout << setfill(' ');
+	cout << left << setfill(' ') << setw(5);
 	if( vname[x][0] ) {
 	  cout << vname[x];
 	} else {
@@ -110,12 +112,16 @@ int main(int argc, char *argv[])
 	    top -= MAXOP;
 	  }
 	  if( top < MAXOP)  {
-	    cout << setw(10) << opcodemap[top] << " ";
-	    cout << setw(5);
-	    if( vname[bottom][0] ) {
-	      cout << vname[bottom];
+	    cout << setw(5) << opcodemap[top];
+	    if( top == POP || top == PUSH ) {
+	      cout << setw(1) << "+" << setw(5) << opcodemap[bottom];
 	    } else {
-	      cout << bottom;
+	      cout << setw(10) << right;
+	      if( vname[bottom][0] ) {
+		cout << vname[bottom];
+	      } else {
+		cout << bottom;
+	      }
 	    }
 	    if( indirect ) {
 	      cout << " ** indirect **";
@@ -123,7 +129,7 @@ int main(int argc, char *argv[])
 	  }
 	} else {
 	  if( dtype[x] & DATA ) {
-	    cout << setw(5) << "#" << contents[x];
+	    cout << "#" << setw(6) << contents[x];
 	  }
 
 	  
