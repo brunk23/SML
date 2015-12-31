@@ -7,11 +7,8 @@
 
 using std::cin;
 using std::cout;
-using std::cerr;
 using std::endl;
-using std::getline;
 using std::setw;
-using std::string;
 using std::ifstream;
 using std::setfill;
 
@@ -28,7 +25,6 @@ int main(int argc, char *argv[])
   char vname[MEMSIZE][4], cname[4] = { 'a', 'a', 'a', 0 };
   int returnCode = 0, counter = 0, input = 0;
   int scount = 0, top = 0, bottom = 0;
-  string line;
   bool indirect = false;
   
   for(int x = 0; x < MEMSIZE; ++x) {
@@ -58,7 +54,7 @@ int main(int argc, char *argv[])
       filename >> input;
       if( filename.fail() ) {
 	filename.clear();
-	filename.ignore();
+	filename.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	continue;
       }
       contents[counter] = input;
