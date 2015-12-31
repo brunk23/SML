@@ -84,11 +84,10 @@ int main(int argc, char *argv[])
 	      }
 	    }
 	  }
-	  // The destination is a string
-	  if( top != HALT && top != RET ) {
+	  if( top != HALT && top != RET && top != BRANCH) {
 	    dtype[counter+1] |= CODE;
 	  }
-	  if( top == SREAD || SWRITE ) {
+	  if( top == SREAD || top == SWRITE ) {
 	    dtype[bottom] |= STRI;
 	  } else {
 	    if( top == BRANCH || top == BRANCHNEG ||
@@ -100,15 +99,6 @@ int main(int argc, char *argv[])
 	  }
 	}
 	
-
-	if( dtype[counter] & STRI ) {
-	  if( scount > 0 ) {
-	    scount -= 2;
-	    dtype[counter+1] |= STRI;
-	  } else {
-	    scount = top/2 + 1;
-	  }
-	}
 	counter++;
       }
       delete pfull;
@@ -131,7 +121,7 @@ int main(int argc, char *argv[])
 	    top -= MAXOP;
 	  }
 	  if( top < MAXOP)  {
-	    cout << setw(8) << opcodemap[top] << " ";
+	    cout << setw(10) << opcodemap[top] << " ";
 	    cout << setw(5);
 	    if( vname[bottom][0] ) {
 	      cout << vname[bottom];
@@ -141,6 +131,26 @@ int main(int argc, char *argv[])
 	    if( indirect ) {
 	      cout << " ** indirect **";
 	    }
+	  }
+	} else {
+	  if( dtype[x] & DATA ) {
+	    cout << setw(5) << "#" << contents[x];
+	  }
+
+	  
+	  if( dtype[x] & STRI ) {
+	    scount = top/2 + 1;
+	    cout << "   \"" << static_cast<char>(bottom);
+	    while (scount > 0 ) {
+	      --scount;
+	      ++x;
+	      cout << static_cast<char>(contents[x] / OPFACT);
+	      if ( contents[x] > 0 ) {
+		cout << static_cast<char>(contents[x] % OPFACT);
+	      }
+	    }
+	    --x;
+	    cout << "\"";
 	  }
 	}
 	cout << endl;
