@@ -94,12 +94,15 @@ int main(int argc, char *argv[])
       }	
       counter++;
     }
+    
+    // This adds a header to the columns
     cout << right << setw(4) << "Loc:" << setw(7)
 	 << "Value" << setw(7) << "Lbl:" << setw(14)
-	 << "Instruction" << setw(12) << "Argument" << endl;
-    cout << right << setw(4) << "----" << setw(7)
-	 << "-----" << setw(7) << "----" << setw(14)
-	 << "-----------" << setw(12) << "--------" << endl;
+	 << "Instruction" << setw(12) << "Argument" << endl
+	 << setw(4) << "----" << setw(8)
+	 << "-------" << setw(6) << "----" << setw(15)
+	 << "-------------" << setw(11) << "--------" << endl;
+
     for( int x = 0; x < MEMSIZE; ++x ) {
       if( dtype[x] ) {
 	top = contents[x] / OPFACT;
