@@ -98,10 +98,10 @@ int main(int argc, char *argv[])
     // This adds a header to the columns
     cout << right << setw(4) << "Loc:" << setw(7)
 	 << "Value" << setw(7) << "Lbl:" << setw(14)
-	 << "Instruction" << setw(12) << "Argument" << endl
+	 << "Instruction" << setw(11) << "Argument" << endl
 	 << setw(4) << "----" << setw(8)
 	 << "-------" << setw(6) << "----" << setw(15)
-	 << "-------------" << setw(11) << "--------" << endl;
+	 << "-------------" << setw(10) << "--------" << endl;
 
     for( int x = 0; x < MEMSIZE; ++x ) {
       if( dtype[x] ) {
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
 	    if( top == POP || top == PUSH ) {
 	      cout << setw(1) << "+" << setw(5) << opcodemap[bottom];
 	    } else {
-	      cout << setw(13) << right;
+	      cout << setw(12) << right;
 	      if( vname[bottom][0] ) {
 		cout << vname[bottom];
 	      } else {
