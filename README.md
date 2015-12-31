@@ -13,8 +13,8 @@ expected according to the book.
 
 The compiler is written in C, not C++.  Why?  No real reason, aside from the
 fact that I wanted to make sure I still remembered enough of the way C does
-things to complete the project in that language.  The compiler currently supports
-the following commands:
+things to complete the project in that language.  The lisp syntax compiler
+currently supports the following commands:
 
 * ; -- anything after a ; is ignored
 * input -- (input variable) -- returns value entered or number of chars entered
@@ -28,3 +28,6 @@ the following commands:
 
 
 Everything is case-insensitive. It will be forced to lower-case.
+
+The basic compiler uses statements similar to the ones given by Deital and
+Deital in their activity recommendations.
