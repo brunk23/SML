@@ -94,21 +94,25 @@ int main(int argc, char *argv[])
       }	
       counter++;
     }
-    cout << right << setw(4) << "LOC:" << setw(8)
-	 << "VALUE" << setw(6) << "LBL" << setw(13)
-	 << "INSTRUCTION" << setw(10) << "ARGUMENT" << endl;
+    cout << right << setw(4) << "Loc:" << setw(7)
+	 << "Value" << setw(7) << "Lbl:" << setw(14)
+	 << "Instruction" << setw(12) << "Argument" << endl;
+    cout << right << setw(4) << "----" << setw(7)
+	 << "-----" << setw(7) << "----" << setw(14)
+	 << "-----------" << setw(12) << "--------" << endl;
     for( int x = 0; x < MEMSIZE; ++x ) {
       if( dtype[x] ) {
 	top = contents[x] / OPFACT;
 	bottom = contents[x] % OPFACT;
-	cout << right << setfill('0') << setw(3) << x << ":  ";
+	cout << right << setfill('0') << setw(3) << x << ": ";
 	cout << setw(7) << contents[x] << "  ";
-	cout << left << setfill(' ') << setw(5);
+	cout << left << setfill(' ') << setw(3);
 	if( vname[x][0] ) {
-	  cout << vname[x];
+	  cout << vname[x] << setw(1) << ":";
 	} else {
-	  cout << "   ";
+	  cout << "    ";
 	}
+	cout << setw(2) << "";
 	if( dtype[x] & CODE ) {
 	  if( top > MAXOP ) {
 	    indirect = true;
@@ -119,7 +123,7 @@ int main(int argc, char *argv[])
 	    if( top == POP || top == PUSH ) {
 	      cout << setw(1) << "+" << setw(5) << opcodemap[bottom];
 	    } else {
-	      cout << setw(10) << right;
+	      cout << setw(13) << right;
 	      if( vname[bottom][0] ) {
 		cout << vname[bottom];
 	      } else {
