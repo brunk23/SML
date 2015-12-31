@@ -1,4 +1,4 @@
-SML
+## SML
 
 This is the SML (Simpletron Machine Language) simulator and compiler that
 I have created.  It is based on the model suggested by Deital and Deital
@@ -16,21 +16,15 @@ fact that I wanted to make sure I still remembered enough of the way C does
 things to complete the project in that language.  The compiler currently supports
 the following commands:
 
-rem -- a comment
+* ; -- anything after a ; is ignored
+* input -- (input variable) -- returns value entered or number of chars entered
+* print -- (print (statement)) -- returns value printed or number of chars printed
+* setf -- (setf variable (statement) )
+* if -- (if (condition) (statement) (statement) )
+* inc/dec -- (1+ variable) (1- variable)
+* loop -- (loop (statements) ... (if (cond) (return)))
+* cond -- (< <= >= > = !=)
+* operators -- (*, /, %, +, -)
 
-input -- read a value from the user
 
-print -- print a value
-
-let -- variable = expression
-
-if -- variable/constant condition variable/constant
-
-inc/dec -- increment/decrement a variable
-
-expressions can consist of: +, -, \*, /, % and ( )s
-
-conditions accepted are: ==, !=, <, <=, >, >=
-
-All variables are a single letter, everything is case-insensitive. It will
-be forced to lower-case.
+Everything is case-insensitive. It will be forced to lower-case.
