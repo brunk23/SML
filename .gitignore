@@ -6,3 +6,4 @@ sml_basic
 sml_lisp
 sml_disass
 sml_sim
+lex.yy.c
