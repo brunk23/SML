@@ -11,8 +11,8 @@ int compileTree(struct Cons *base, int code[MEMSIZE]) {
   
   /* The first pass collects all the symbols and populates
    * the symbol tree, it generates code for everything but
-   * defun options, we call comp_progn because everything is
-   * constained in a (progn ) list */
+   * defun options, we call comp_list because everything is
+   * contained in a (progn ) list */
   comp_list(base,&symTree,code);
   code[iptr(1)] = (HALT*OPFACT) + NIL;
 
