@@ -20,33 +20,31 @@ using std::setfill;
 
 int main(int argc, char *argv[])
 {
-  int returnCode = 0;
-  int input = 0;
+  int returnCode = 0, input = 1, indirect_address = 0;
   string line;
   char *parse, *pfull, *before;
   machineState smlReal;
   machineState *sml = &smlReal;
   bool debug = false;
-  int x = 1;
 
   // If there's an error making the machine, quit.
   if ( (returnCode = init_machine(sml)) ) {
     cout << "ERROR: Failed to create SML Machine." << endl;
-    return 1;
+    return returnCode;
   }
   if( argc > 1 ) {
     if( strcmp(argv[1],"-d") == 0 || strcmp(argv[1],"-debug") == 0) {
       debug = true;
-      x++;
+      input++;
     }
     ifstream filename;
-    filename.open(argv[x], std::ios::in);
-    cout << "Opening file: " << argv[x] << endl;
+    filename.open(argv[input], std::ios::in);
+    cout << "Opening file: " << argv[input] << endl;
     if( !filename.is_open() ) {
       cout << "Unable to open file" << endl;
-      return 1;
+      return 1;		// This should be changed
     }
-    cout << "Opened file: " << argv[x] << endl;
+    cout << "Opened file: " << argv[input] << endl;
     while( getline(filename, line) ) {
       parse = 0;
       pfull = new char[line.size()];
@@ -58,11 +56,11 @@ int main(int argc, char *argv[])
 	if( parse == before || parse == 0 ) {
 	  break;
 	}
-	if( !out_of_bounds(input,MINVAL,MAXVAL) ) {
+	if( !out_of_bounds(input,MINVAL,MAXVAL) ) {		// Write abstract function for this
 	  smlReal.memory[smlReal.counter++] = input;
 	} else {
 	  cout << "Error in file" << endl;
-	  return 1;
+	  return 1;		// This should be changed
 	}
       }
       delete pfull;
@@ -84,12 +82,12 @@ int main(int argc, char *argv[])
 	if( parse == before || parse == 0 ) {
 	  break;
 	}
-	if( !out_of_bounds(input,MINVAL,MAXVAL) ) {
+	if( !out_of_bounds(input,MINVAL,MAXVAL) ) {		// use abstract function
 	  smlReal.memory[smlReal.counter++] = input;
 	} else {
 	  if( input != EINPUT ) {
 	    cout << "Error in file" << endl;
-	    return 1;
+	    return 1;		// remove magic number
 	  } else {
 	    break;
 	  }
@@ -107,7 +105,7 @@ int main(int argc, char *argv[])
   while ( smlReal.running ) {
     if(smlReal.counter == MEMSIZE) {
       error_message("COUNTER OVERRAN MEMORY");
-      returnCode = 1;
+      returnCode = 1;		// magic number again
       break;
     }
     smlReal.instructionRegister = smlReal.memory[smlReal.counter];
@@ -123,14 +121,14 @@ int main(int argc, char *argv[])
 	continue;
       }
       smlReal.indirect = true;
-      x = sml->memory[sml->operand] / OPFACT;
-      x += sml->memory[sml->operand] % OPFACT;
-      if( out_of_bounds( x, 0, MEMSIZE-1) ) {
+      indirect_address = sml->memory[sml->operand] / OPFACT;
+      indirect_address += sml->memory[sml->operand] % OPFACT;
+      if( !(is_valid_address( indirect_address )) ) {
 	sml->running = false;
 	error_message("INDIRECT ADDRESS INVALID");
 	continue;
       }
-      sml->operand = x;
+      sml->operand = indirect_address;
     } else {
       smlReal.indirect = false;
     }
@@ -265,6 +263,14 @@ int memory_dump(machineState *sml)
   return 0;
 }
 
-bool out_of_bounds(int n,int min, int max) {
-  return ( (n > max) || (n < min) );
+bool is_valid_address(int address) {
+	return !(out_of_bounds(address, 0, MEMSIZE - 1));
+}
+			       
+/*
+ * Determine if a certain value is out of range. Useful for determining
+ * memory validity and other functions.
+ */
+bool out_of_bounds(int value, int min, int max) {
+  return ( (value > max) || (value < min) );
 }
